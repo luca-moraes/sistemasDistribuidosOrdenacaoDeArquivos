@@ -71,7 +71,7 @@ void fileFiller(int sentinel, struct Pessoa pessoas[], FILE *pOutput){
         char idade[20];
 
         sprintf(idade, "%d", pessoaAtual->idade);
-        sprintf(altura, "%f", pessoaAtual->altura);
+        sprintf(altura, "%.2f", pessoaAtual->altura);
 
         fputs(pessoaAtual->nome, pOutput);
         fputs(idade, pOutput);
