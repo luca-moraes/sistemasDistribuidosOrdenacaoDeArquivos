@@ -21,27 +21,9 @@ int ageComparator(const void *a, const void *b){
     }
 }
 
-int main(int argc, char **argv){
-    int arraySize;
-
-    if (argc < 1) {
-        arraySize = 20;
-    } else{
-        arraySize = atoi(*argv);
-    }
-
-    struct Pessoa pessoas[arraySize];
-
+int arrayFiller(struct Pessoa pessoas[], FILE *pInput){
     struct Pessoa *pessoaAtual;
     pessoaAtual = &pessoas[0];
-
-    FILE *pInput;
-    pInput = fopen("infos.txt", "r");
-
-    if (pInput == NULL){
-        printf("Erro ao tentar abrir o arquivo!");
-        exit(1);
-    }
 
     char buffer[20];
     int counter = 0;
@@ -56,21 +38,21 @@ int main(int argc, char **argv){
                 printf("%s", buffer);
                 strncpy(pessoaAtual->nome, buffer, 20);
                 counter++;
-            break;
+                break;
 
             case 1:
                 iTemp = atoi(buffer);
                 printf("%d \n", iTemp);
                 pessoaAtual->idade = iTemp;
                 counter++;
-            break;
+                break;
 
             case 2:
                 fTemp = atof(buffer);
                 printf("%f \n", fTemp);
                 pessoaAtual->altura = fTemp;
                 counter++;
-            break;
+                break;
         }
 
         if(counter == 3) {
@@ -80,7 +62,71 @@ int main(int argc, char **argv){
         }
     }
 
-    qsort(pessoas, sentinel, sizeof(Pessoa), ageComparator);
+    return sentinel;
+}
+
+int main(int argc, char **argv){
+    int arraySize = 20;
+
+//    if (argc < 1) {
+//        arraySize = 20;
+//    } else{
+//        arraySize = atoi(*argv);
+//    }
+
+    FILE *pInput;
+    pInput = fopen("infos.txt", "r");
+
+    if (pInput == NULL){
+        printf("Erro ao tentar abrir o arquivo!");
+        exit(1);
+    }
+
+    struct Pessoa pessoas[arraySize];
+
+    int sentinel = arrayFiller(pessoas, pInput);
+
+    struct Pessoa *pessoaAtual;
+//    pessoaAtual = &pessoas[0];
+//
+//    char buffer[20];
+//    int counter = 0;
+//    int sentinel = 0;
+//
+//    while (fgets(buffer, sizeof buffer, pInput) != NULL){
+//        float fTemp = 0;
+//        int iTemp = 0;
+//
+//        switch(counter){
+//            case 0:
+//                printf("%s", buffer);
+//                strncpy(pessoaAtual->nome, buffer, 20);
+//                counter++;
+//            break;
+//
+//            case 1:
+//                iTemp = atoi(buffer);
+//                printf("%d \n", iTemp);
+//                pessoaAtual->idade = iTemp;
+//                counter++;
+//            break;
+//
+//            case 2:
+//                fTemp = atof(buffer);
+//                printf("%f \n", fTemp);
+//                pessoaAtual->altura = fTemp;
+//                counter++;
+//            break;
+//        }
+//
+//        if(counter == 3) {
+//            sentinel++;
+//            pessoaAtual = &pessoas[sentinel];
+//            counter = 0;
+//        }
+//    }
+
+    qsort(pessoas, sentinel, sizeof(struct Pessoa), ageComparator);
 
     fclose(pInput);
 
