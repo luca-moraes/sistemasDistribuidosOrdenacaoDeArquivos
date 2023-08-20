@@ -35,21 +35,18 @@ int arrayFiller(struct Pessoa pessoas[], FILE *pInput){
 
         switch(counter){
             case 0:
-                printf("%s", buffer);
                 strncpy(pessoaAtual->nome, buffer, 20);
                 counter++;
                 break;
 
             case 1:
                 iTemp = atoi(buffer);
-                printf("%d \n", iTemp);
                 pessoaAtual->idade = iTemp;
                 counter++;
                 break;
 
             case 2:
                 fTemp = atof(buffer);
-                printf("%f \n", fTemp);
                 pessoaAtual->altura = fTemp;
                 counter++;
                 break;
@@ -65,14 +62,33 @@ int arrayFiller(struct Pessoa pessoas[], FILE *pInput){
     return sentinel;
 }
 
-int main(int argc, char **argv){
-    int arraySize = 20;
+void fileFiller(int sentinel, struct Pessoa pessoas[], FILE *pOutput){
+    struct Pessoa *pessoaAtual;
 
-//    if (argc < 1) {
-//        arraySize = 20;
-//    } else{
-//        arraySize = atoi(*argv);
-//    }
+    for(int i = 0; i < sentinel; i++){
+        pessoaAtual = &pessoas[i];
+        char altura[20];
+        char idade[20];
+
+        sprintf(idade, "%d", pessoaAtual->idade);
+        sprintf(altura, "%f", pessoaAtual->altura);
+
+        fputs(pessoaAtual->nome, pOutput);
+        fputs(idade, pOutput);
+        fputs("\n", pOutput);
+        fputs(altura, pOutput);
+        fputs("\n", pOutput);
+    }
+}
+
+int main(int argc, char **argv){
+    int arraySize;
+
+    if (argc < 1) {
+        arraySize = 20;
+    } else {
+       arraySize = atoi(argv[1]);
+    }
 
     FILE *pInput;
     pInput = fopen("infos.txt", "r");
@@ -86,49 +102,9 @@ int main(int argc, char **argv){
 
     int sentinel = arrayFiller(pessoas, pInput);
 
-    struct Pessoa *pessoaAtual;
-//    pessoaAtual = &pessoas[0];
-//
-//    char buffer[20];
-//    int counter = 0;
-//    int sentinel = 0;
-//
-//    while (fgets(buffer, sizeof buffer, pInput) != NULL){
-//        float fTemp = 0;
-//        int iTemp = 0;
-//
-//        switch(counter){
-//            case 0:
-//                printf("%s", buffer);
-//                strncpy(pessoaAtual->nome, buffer, 20);
-//                counter++;
-//            break;
-//
-//            case 1:
-//                iTemp = atoi(buffer);
-//                printf("%d \n", iTemp);
-//                pessoaAtual->idade = iTemp;
-//                counter++;
-//            break;
-//
-//            case 2:
-//                fTemp = atof(buffer);
-//                printf("%f \n", fTemp);
-//                pessoaAtual->altura = fTemp;
-//                counter++;
-//            break;
-//        }
-//
-//        if(counter == 3) {
-//            sentinel++;
-//            pessoaAtual = &pessoas[sentinel];
-//            counter = 0;
-//        }
-//    }
+    fclose(pInput);
 
     qsort(pessoas, sentinel, sizeof(struct Pessoa), ageComparator);
-
-    fclose(pInput);
 
     FILE *pOutput;
     pOutput = fopen("sortedInfos.txt", "w");
@@ -139,20 +115,7 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    for(int i = 0; i < sentinel; i++){
-        pessoaAtual = &pessoas[i];
-        char idade[20];
-        char altura[20];
-
-        sprintf(idade, "%d", pessoaAtual->idade);
-        sprintf(altura, "%f", pessoaAtual->altura);
-
-        fputs(pessoaAtual->nome, pOutput);
-        fputs(idade, pOutput);
-        fputs("\n", pOutput);
-        fputs(altura, pOutput);
-        fputs("\n", pOutput);
-    }
+    fileFiller(sentinel, pessoas, pOutput);
 
     fclose(pOutput);
 
